@@ -32,3 +32,19 @@ trim_trailing_whitespace = false
 # Denotes whether file should end with a newline
 # Possible values - true, false
 insert_final_newline = true
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Dependency directory
+node_modules
+
+# Optional npm cache directory
+.npm
+
+# System files and IDE settings folders
+.DS_Store
+.idea
+.vscode
