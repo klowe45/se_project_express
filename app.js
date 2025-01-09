@@ -12,10 +12,15 @@ mongoose
   })
   .catch(console.error);
 
-// const routes = require("./routes");
-// app.use(routes);
 app.use(express.json());
 app.use("/", mainRouter);
+
+app.use((req, res, next) => {
+  req.user = {
+    _id: "678024fef5a18c52bd0faffb",
+  };
+  next();
+});
 
 app.listen(PORT, () => {
   console.log(`Server is listening to port ${PORT}`);
