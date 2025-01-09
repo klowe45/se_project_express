@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const validator = require("valiidator");
+const validator = require("validator");
 
 const cothingItem = new mongoose.Schema({
   name: {
@@ -17,7 +17,7 @@ const cothingItem = new mongoose.Schema({
   imageURL: {
     type: String,
     required: true,
-    validatite: {
+    validate: {
       validator: (values) => validator.isURL(values),
       message: "Need vaild URL",
     },
