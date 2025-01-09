@@ -7,7 +7,12 @@ const getUsers = (req, res) => {
     .then((users) => res.status(200).send(users))
     .catch((err) => {
       console.error(err);
-      return res.status(NOT_FOUND).send({ message: err.message });
+      if (err.name === "VaildationError") {
+        return res.status(NOT_FOUND).send({ message: "Unable to find users" });
+      }
+      return res
+        .status(SERVER_ERROR)
+        .send({ message: "Server Error on get users" });
     });
 };
 
@@ -18,10 +23,15 @@ const getUser = (req, res) => {
     .then((user) => res.status(200).send(user))
     .catch((err) => {
       console.log(err);
-      if (err.name === "Document not found Error") {
-        return res.status(NOT_FOUND).send({ message: err.message });
+      if (err.name === "DocumentNotFoundError") {
+        return res.status(NOT_FOUND).send({ message: "Unable to find User" });
       }
-      return res.status(BAD_REQUEST).send({ message: "Invailed user ID" });
+      if (err.name === "CastError") {
+        return res.status(BAD_REQUEST).send({ message: "Invailed user ID" });
+      }
+      return res
+        .status(SERVER_ERROR)
+        .send({ message: "Server error on getting user" });
     });
 };
 
