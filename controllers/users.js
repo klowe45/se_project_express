@@ -15,7 +15,8 @@ const createUser = (req, res) => {
     .then((user) => res.status(201).send(user))
     .catch((err) => {
       console.log(err);
-      return res.status(500).send({ message: err.message });
+      console.log(err.name);
+      return res.status(400).send({ message: err.message });
     });
 };
 
