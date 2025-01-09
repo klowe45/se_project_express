@@ -19,9 +19,16 @@ const createItem = (req, res) => {
       console.log(item);
       res.send({ data: item });
     })
-    .catch((err) =>
-      res.status(BAD_REQUEST).send({ message: "Error from createItem", err })
-    );
+    .catch((err) => {
+      if (err.name === "ValidationError") {
+        return res
+          .status(BAD_REQUEST)
+          .send({ message: "Error from createItem", err });
+      }
+      return res
+        .status(SERVER_ERROR)
+        .send({ message: "Server Error on create Item" });
+    });
 };
 
 const getItems = (req, res) => {
