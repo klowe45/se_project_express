@@ -2,7 +2,9 @@ const mongoose = require("mongoose");
 const validator = require("valiidator");
 
 const cothingItemSchemas = new mongoose.Schema({
-  name: {},
+  name: {
+    type: String,
+  },
   weather: {},
   imageURL: {},
   owner: {},
