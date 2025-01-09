@@ -20,9 +20,8 @@ const getUser = (req, res) => {
       console.log(err);
       if (err.name === "Document not found Error") {
         return res.status(NOT_FOUND).send({ message: err.message });
-      } else if (err.name === "CastError") {
-        return res.status(BAD_REQUEST).send({ message: "Invailed user ID" });
       }
+      return res.status(BAD_REQUEST).send({ message: "Invailed user ID" });
     });
 };
 

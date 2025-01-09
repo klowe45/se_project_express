@@ -45,9 +45,8 @@ const updateItem = (req, res) => {
         return res
           .status(BAD_REQUEST)
           .send({ message: "Invalid Information", err });
-      } else {
-        return res.status(SERVER_ERROR).send({ message: "Server Error" });
       }
+      return res.status(SERVER_ERROR).send({ message: "Server Error" });
     });
 };
 
@@ -59,7 +58,9 @@ const deleteItem = (req, res) => {
     .then((item) => res.status(204).send(item))
     .catch((err) => {
       if (err.name === "DocumentNotFoundError") {
-        res.status(BAD_REQUEST).send({ message: "Unable to delete", err });
+        return res
+          .status(BAD_REQUEST)
+          .send({ message: "Unable to delete", err });
       } else if (err.name === "CastError") {
         return res
           .status(SERVER_ERROR)
@@ -81,7 +82,7 @@ const likeItem = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "ItemNotFound") {
-        res.status(NOT_FOUND).send({ message: "Unable to like" });
+        return res.status(NOT_FOUND).send({ message: "Unable to like" });
       } else if (err.name === "CastError") {
         return res
           .status(SERVER_ERROR)
@@ -104,11 +105,10 @@ const dislikeItem = (req, res) => {
       console.error(err);
       if (err.name === "ItemNotFound") {
         return res.status(NOT_FOUND).send({ message: "Unable to dislike" });
-      } else if (res.name === "CastError") {
-        return res
-          .status(SERVER_ERROR)
-          .send({ message: "Server Error on dislike" });
       }
+      return res
+        .status(SERVER_ERROR)
+        .send({ message: "Server Error on dislike" });
     });
 };
 
