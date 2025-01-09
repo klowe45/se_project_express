@@ -10,9 +10,8 @@ const cothingItem = new mongoose.Schema({
   },
   weather: {
     type: String,
-    validate: {
-      enum: ["hot", "cold", "warm"],
-    },
+    required: true,
+    enum: ["hot", "cold", "warm"],
   },
   imageURL: {
     type: String,
