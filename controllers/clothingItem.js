@@ -16,14 +16,13 @@ const createItem = (req, res) => {
     createdAt,
   })
     .then((item) => {
-      console.log(item);
       res.send({ data: item });
     })
     .catch((err) => {
       if (err.name === "ValidationError") {
         return res
           .status(BAD_REQUEST)
-          .send({ message: "Error from createItem", err });
+          .send({ message: "Error from createItem" });
       }
       return res
         .status(SERVER_ERROR)
@@ -35,7 +34,7 @@ const getItems = (req, res) => {
   ClothingItem.find({})
     .then((items) => res.status(200).send(items))
     .catch((err) => {
-      res.status(NOT_FOUND).send({ message: "Error in getItems", err });
+      res.status(NOT_FOUND).send({ message: "Error in getItems" });
     });
 };
 
@@ -49,9 +48,7 @@ const updateItem = (req, res) => {
     .catch((err) => {
       console.log(err.name);
       if (err.name === "ValidationError") {
-        return res
-          .status(BAD_REQUEST)
-          .send({ message: "Invalid Information", err });
+        return res.status(BAD_REQUEST).send({ message: "Invalid Information" });
       }
       return res.status(SERVER_ERROR).send({ message: "Server Error" });
     });
@@ -65,9 +62,7 @@ const deleteItem = (req, res) => {
     .then((item) => res.status(204).send(item))
     .catch((err) => {
       if (err.name === "DocumentNotFoundError") {
-        return res
-          .status(BAD_REQUEST)
-          .send({ message: "Unable to delete", err });
+        return res.status(NOT_FOUND).send({ message: "Unable to delete" });
       } else if (err.name === "CastError") {
         return res
           .status(SERVER_ERROR)
@@ -111,7 +106,10 @@ const dislikeItem = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "ItemNotFound") {
-        return res.status(NOT_FOUND).send({ message: "Unable to dislike" });
+        return res.status(NOT_FOUND).send({ message: "Unable to find item" });
+      }
+      if (err.name === "ItemNotFound") {
+        return res.status(BAD_REQUEST).send({ message: "Unable to find Id" });
       }
       return res
         .status(SERVER_ERROR)
