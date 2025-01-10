@@ -6,17 +6,16 @@ const createItem = (req, res) => {
   console.log(res.body);
 
   const { name, weather, imageURL, likes, createdAt } = req.body;
-
+  const owner = req.user._id;
   ClothingItem.create({
     name,
     weather,
     imageURL,
-    owner: req.user._id,
+    owner,
     likes,
     createdAt,
   })
     .then((item) => {
-      res.setHeaders("Content-Type", "application/json");
       res.status(201).send({ data: item });
     })
     .catch((err) => {
@@ -81,15 +80,14 @@ const deleteItem = (req, res) => {
 };
 
 const likeItem = (req, res) => {
-  ClothingItem.findByIdAndUpdate(req.params.itemId, {
-    $addToSet: { likes: req.user._id },
-    new: true,
-  })
+  const { itemId } = req.params;
+  ClothingItem.findByIdAndUpdate(
+    req.params.itemId,
+    { $addToSet: { likes: req.user._id } },
+    { new: true }
+  )
     .onFail()
-    .then((item) => {
-      res.setHeaders("Content-Type", "application/json");
-      res.status(200).send({ data: item });
-    })
+    .then((item) => res.status(200).send({ data: item }))
     .catch((err) => {
       console.error(err);
       if (err.name === "ItemNotFound") {
