@@ -17,7 +17,7 @@ const createItem = (req, res) => {
   })
     .then((item) => {
       res.setHeaders("Content-Type", "application/json");
-      res.send({ data: item });
+      res.status(201).send({ data: item });
     })
     .catch((err) => {
       if (err.name === "ValidationError") {
@@ -88,7 +88,7 @@ const likeItem = (req, res) => {
     .onFail()
     .then((item) => {
       res.setHeaders("Content-Type", "application/json");
-      res.send({ data: item });
+      res.status(200).send({ data: item });
     })
     .catch((err) => {
       console.error(err);
@@ -96,7 +96,7 @@ const likeItem = (req, res) => {
         return res.status(NOT_FOUND).send({ message: "Unable to like" });
       }
       if (err.name === "CastError") {
-        return res.status(BAD_REQUEST).send({ message: "Invalid item ID" });
+        return res.status(NOT_FOUND).send({ message: "Invalid item ID" });
       }
       return res.status(SERVER_ERROR).send({ message: "Server Error on like" });
     });
@@ -110,7 +110,7 @@ const dislikeItem = (req, res) => {
     .orFail()
     .then((item) => {
       res.setHeaders("Content-Type", "application/json");
-      res.status(202).send({ data: item });
+      res.status(200).send({ data: item });
     })
     .catch((err) => {
       console.error(err);
