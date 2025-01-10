@@ -16,6 +16,7 @@ const createItem = (req, res) => {
     createdAt,
   })
     .then((item) => {
+      res.setHeaders("Content-Type", "application/json");
       res.send({ data: item });
     })
     .catch((err) => {
@@ -59,7 +60,10 @@ const deleteItem = (req, res) => {
 
   ClothingItem.findByIdAndDelete(itemId)
     .orFail()
-    .then((item) => res.status(204).send(item))
+    .then((item) => {
+      res.setHeaders("Content-Type", "application/json");
+      res.status(204).send(item);
+    })
     .catch((err) => {
       if (err.name === "DocumentNotFoundError") {
         return res.status(NOT_FOUND).send({ message: "Unable to delete" });
