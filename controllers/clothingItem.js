@@ -35,6 +35,7 @@ const getItems = (req, res) => {
   ClothingItem.find({})
     .then((items) => res.status(200).send(items))
     .catch((err) => {
+      console.log(err);
       res.status(NOT_FOUND).send({ message: "Error in getItems" });
     });
 };
@@ -67,11 +68,15 @@ const deleteItem = (req, res) => {
     .catch((err) => {
       if (err.name === "DocumentNotFoundError") {
         return res.status(NOT_FOUND).send({ message: "Unable to delete" });
-      } else if (err.name === "CastError") {
+      }
+      if (err.name === "CastError") {
         return res
-          .status(SERVER_ERROR)
+          .status(BAD_REQUEST)
           .send({ message: "Server error on delete" });
       }
+      return res
+        .status(SERVER_ERROR)
+        .send({ message: "Server error on delete" });
     });
 };
 
@@ -89,11 +94,11 @@ const likeItem = (req, res) => {
       console.error(err);
       if (err.name === "ItemNotFound") {
         return res.status(NOT_FOUND).send({ message: "Unable to like" });
-      } else if (err.name === "CastError") {
-        return res
-          .status(SERVER_ERROR)
-          .send({ message: "Server Error on like" });
       }
+      if (err.name === "CastError") {
+        return res.status(BAD_REQUEST).send({ message: "Invalid item ID" });
+      }
+      return res.status(SERVER_ERROR).send({ message: "Server Error on like" });
     });
 };
 
