@@ -29,22 +29,8 @@ const getItems = (req, res) => {
   ClothingItem.find({})
     .then((items) => res.status(200).send(items))
     .catch((err) => {
-      console.log(err);
-      res.status(NOT_FOUND).send({ message: "Error in getItems" });
-    });
-};
-
-const updateItem = (req, res) => {
-  const { itemId } = req.params;
-  const { imageUrl } = req.body;
-
-  ClothingItem.findByIdAndUpdate(itemId, { $set: { imageUrl } })
-    .orFail()
-    .then((item) => res.status(200).send({ data: item }))
-    .catch((err) => {
-      console.log(err.name);
-      if (err.name === "ValidationError") {
-        return res.status(BAD_REQUEST).send({ message: "Invalid Information" });
+      if (err.name === "DocumentNotFoundError") {
+        return res.status(NOT_FOUND).send({ message: "Error in getItems" });
       }
       return res.status(SERVER_ERROR).send({ message: "Server Error" });
     });
@@ -88,6 +74,7 @@ const likeItem = (req, res) => {
       if (err.name === "CastError") {
         return res.status(BAD_REQUEST).send({ message: "Invalid item ID" });
       }
+      return res.status(SERVER_ERROR).send({ message: "Server Error" });
     });
 };
 
@@ -98,7 +85,7 @@ const dislikeItem = (req, res) => {
     return res.status(BAD_REQUEST).send({ message: "Item ID is required" });
   }
 
-  ClothingItem.findByIdAndUpdate(
+  return ClothingItem.findByIdAndUpdate(
     itemId,
     { $pull: { likes: req.user._id } },
     { new: true }
@@ -107,7 +94,7 @@ const dislikeItem = (req, res) => {
       if (!item) {
         return res.status(NOT_FOUND).send({ message: "Item not found" });
       }
-      res.status(200).send({ data: item });
+      return res.status(200).send({ data: item });
     })
     .catch((err) => {
       if (err.name === "CastError") {
@@ -116,10 +103,10 @@ const dislikeItem = (req, res) => {
       return res.status(SERVER_ERROR).send({ message: "Server error" });
     });
 };
+
 module.exports = {
   createItem,
   getItems,
-  updateItem,
   deleteItem,
   likeItem,
   dislikeItem,

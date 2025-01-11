@@ -3,13 +3,9 @@ const { BAD_REQUEST, NOT_FOUND, SERVER_ERROR } = require("../utils/errors");
 
 const getUsers = (req, res) => {
   User.find({})
-    .orFail()
     .then((users) => res.status(200).send(users))
     .catch((err) => {
       console.error(err);
-      if (err.name === "VaildationError") {
-        return res.status(NOT_FOUND).send({ message: "Unable to find users" });
-      }
       return res
         .status(SERVER_ERROR)
         .send({ message: "Server Error on get users" });
