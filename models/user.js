@@ -23,9 +23,10 @@ const userSchemas = new mongoose.Schema({
     type: String,
     required: true,
     validate: {
-      validator(values) {
-        return validator.isEmail(values);
-      },
+      validator: (values = {
+        validator: validator.isEmail(values),
+        message: "Invalid email format",
+      }),
     },
     unique: true,
     match: [/^\S+@\S+\.\S+$/, "Invalid email format"],
@@ -38,10 +39,10 @@ const userSchemas = new mongoose.Schema({
   },
 });
 
-userSchemas.statics.findUserByCredentials = function findUserByCredentials(
-  email,
-  password
-) {
+userSchemas.statics.findUserByCredentials = function (email, password) {
+  if (!email || !password) {
+    return Promise.reject(new Error("Email and password are required"));
+  }
   return this.findOne({ email })
     .select("+password")
     .then((user) => {

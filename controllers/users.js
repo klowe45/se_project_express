@@ -74,7 +74,7 @@ const createUser = (req, res) => {
 
 const login = (req, res) => {
   const { email, password } = req.body;
-  if (!email || !password) {
+  if (!email || !password || email.trim() === "" || password.trim() === "") {
     return res
       .status(BAD_REQUEST)
       .send({ message: "Email and password are required" });
@@ -92,9 +92,10 @@ const login = (req, res) => {
           .status(UNAUTHORIZED_ACCESS)
           .send({ message: "Wrong Email or Password" });
       }
-      return res
-        .status(SERVER_ERROR)
-        .send({ message: "Server Error on userLogin" });
+      if (err.name)
+        return res
+          .status(SERVER_ERROR)
+          .send({ message: "Server Error on userLogin" });
     });
 };
 
