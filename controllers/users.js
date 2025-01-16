@@ -11,8 +11,10 @@ const jwt = require("jsonwebtoken");
 const JWT_SECRET = require("../utils/config");
 
 const getCurrentUser = (req, res) => {
-  const { userId } = req.params;
-  User.findById(userId)
+  const userId = req.params._id;
+  User.findById(userId);
+  console
+    .log(userId)
     .orFail(() => {
       const error = new Error("User ID not found");
       error.statusCode = NOT_FOUND;
@@ -74,6 +76,9 @@ const login = (req, res) => {
   }
   return User.findUserByCredentials(email, password)
     .then((user) => {
+      if (!user) {
+        throw new Error("User ID not found in the database");
+      }
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
         expiresIn: "7d",
       });

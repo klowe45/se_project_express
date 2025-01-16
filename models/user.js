@@ -8,6 +8,10 @@ const userSchemas = new mongoose.Schema({
     required: true,
     minlength: 2,
     maxlength: 30,
+    validate: {
+      validator: (values) => true,
+      message: "Invalid name",
+    },
   },
   avatar: {
     type: String,
