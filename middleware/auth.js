@@ -23,11 +23,11 @@ const auth = (req, res, next) => {
 
   try {
     payload = jwt.verify(token, JWT_SECRET);
+    req.user = payload;
+    return next();
   } catch (err) {
     return handleAuthError(res);
   }
-  req.user = payload;
-  next();
 };
 
 module.exports = auth;
