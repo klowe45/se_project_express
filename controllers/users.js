@@ -11,7 +11,7 @@ const jwt = require("jsonwebtoken");
 const JWT_SECRET = require("../utils/config");
 
 const getCurrentUser = (req, res) => {
-  const userId = req.params._id;
+  const userId = req.user._id;
   User.findById(userId);
   console
     .log(userId)
@@ -98,7 +98,7 @@ const login = (req, res) => {
 };
 
 const updateProfile = (req, res) => {
-  const userId = req.params._id;
+  const userId = req.user._id;
   const { name, avatar } = req.body;
 
   User.findByIdAndUpdate(
