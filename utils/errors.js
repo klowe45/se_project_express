@@ -3,7 +3,7 @@ const UNAUTHORIZED_ACCESS = 401;
 const FORBIDEN = 403;
 const NOT_FOUND = 404;
 const SERVER_ERROR = 500;
-const CONFLICTING_ERROR = 11000;
+const CONFLICTING_ERROR = 409;
 
 module.exports = {
   BAD_REQUEST,
