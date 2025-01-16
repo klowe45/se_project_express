@@ -23,10 +23,8 @@ const userSchemas = new mongoose.Schema({
     type: String,
     required: true,
     validate: {
-      validator: (values = {
-        validator: validator.isEmail(values),
-        message: "Invalid email format",
-      }),
+      validator: (values) => validator.isEmail(values),
+      message: "Invalid email format",
     },
     unique: true,
     match: [/^\S+@\S+\.\S+$/, "Invalid email format"],
