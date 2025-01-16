@@ -7,6 +7,7 @@ const {
   CONFLICTING_ERROR,
 } = require("../utils/errors");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const JWT_SECRET = require("../utils/config");
 
 const getUsers = (req, res) => {
@@ -73,8 +74,10 @@ const createUser = (req, res) => {
 
 const login = (req, res) => {
   const { email, password } = req.body;
-  if (!email) {
-    return Promise.reject(new Error("Wrong Email or Password"));
+  if (!email || !password) {
+    return res
+      .status(BAD_REQUEST)
+      .send({ message: "Email and password are required" });
   }
   return User.FindUserByCredentials(email, password)
     .then((user) => {
