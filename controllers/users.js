@@ -74,10 +74,7 @@ const createUser = (req, res) => {
 const login = (req, res) => {
   const { email, password } = req.body;
   if (!email) {
-    // return Promise.reject(new Error("Wrong Email or Password"));
-    return res
-      .status(BAD_REQUEST)
-      .send({ message: "Email and Password needed" });
+    return Promise.reject(new Error("Wrong Email or Password"));
   }
   return User.FindUserByCredentials(email, password)
     .then((user) => {
