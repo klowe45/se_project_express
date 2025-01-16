@@ -1,13 +1,15 @@
 const jwt = require("jsonwebtoken");
-const JWT_SECRET = require("../utils/config");
+const { JWT_SECRET } = require("../utils/config");
 const { UNAUTHORIZED_ACCESS } = require("../utils/errors");
 
 const handleAuthError = (res) => {
-  res.status(UNAUTHORIZED_ACCESS).send({ message: "Authorization error" });
+  return res
+    .status(UNAUTHORIZED_ACCESS)
+    .send({ message: "Authorization error" });
 };
 
 const extractBearerToken = (header) => {
-  return header.replace("Bearer", "");
+  return header.replace("Bearer ", "").trim();
 };
 
 const auth = (req, res, next) => {
@@ -22,9 +24,9 @@ const auth = (req, res, next) => {
   try {
     payload = jwt.verify(token, JWT_SECRET);
   } catch (err) {
-    handleAuthError(res);
+    return handleAuthError(res);
   }
-  res.user = payload;
+  req.user = payload;
   next();
 };
 

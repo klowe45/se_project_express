@@ -37,7 +37,7 @@ const getCurrentUser = (req, res) => {
 
 const createUser = (req, res) => {
   const { name, avatar, email, password } = req.body;
-  if (!email) {
+  if (!email || !password) {
     return res.status(BAD_REQUEST).send({ message: "Error, check Email" });
   }
   return User.findOne({ email }).then((existingUser) => {
