@@ -12,9 +12,7 @@ const JWT_SECRET = require("../utils/config");
 
 const getCurrentUser = (req, res) => {
   const userId = req.user._id;
-  User.findById(userId);
-  console
-    .log(userId)
+  User.findById(userId)
     .orFail(() => {
       const error = new Error("User ID not found");
       error.statusCode = NOT_FOUND;

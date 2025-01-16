@@ -43,23 +43,29 @@ const getItems = (req, res) => {
 
 const deleteItem = (req, res) => {
   const { itemId } = req.params;
+  const userId = req.user._id;
+
+  if (!itemId) {
+    res.status(NOT_FOUND).send({ message: "Item ID not found" });
+  }
 
   ClothingItem.findById(itemId)
-    .orFail(() => {
-      const error = new Error("Item not found");
-      error.name = "DocumentNotFoundError";
-      throw error;
-    })
+    .orFail()
     .then((item) => {
       if (item.owner.toString() !== userId) {
         return res
           .status(FORBIDEN)
           .send({ message: "Not allowed to delete Item" });
       }
-      return ClothingItem.findByIdAndDelete(itemId);
-    })
-    .then((deletedItem) => {
-      res.status(200).send({ message: "Item was deleted", deletedItem });
+
+      return ClothingItem.findByIdAndDelete(itemId).then((deletedItem) => {
+        if (!deleteItem) {
+          return res.status(NOT_FOUND).send({ meeage: "Unable to delete" });
+        }
+        return res
+          .status(200)
+          .send({ message: "Item was deleted", deletedItem });
+      });
     })
     .catch((err) => {
       if (err.name === "DocumentNotFoundError") {
