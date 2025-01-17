@@ -33,10 +33,7 @@ const createItem = (req, res) => {
 const getItems = (req, res) => {
   ClothingItem.find({})
     .then((items) => res.status(200).send(items))
-    .catch((err) => {
-      if (err.name === "DocumentNotFoundError") {
-        return res.status(NOT_FOUND).send({ message: "Error in getItems" });
-      }
+    .catch(() => {
       return res.status(SERVER_ERROR).send({ message: "Server Error" });
     });
 };
