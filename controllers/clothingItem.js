@@ -30,13 +30,10 @@ const createItem = (req, res) => {
     });
 };
 
-const getItems = (req, res) => {
+const getItems = (req, res) =>
   ClothingItem.find({})
     .then((items) => res.status(200).send(items))
-    .catch(() => {
-      return res.status(SERVER_ERROR).send({ message: "Server Error" });
-    });
-};
+    .catch(() => res.status(SERVER_ERROR).send({ message: "Server Error" }));
 
 const deleteItem = (req, res) => {
   const { itemId } = req.params;
