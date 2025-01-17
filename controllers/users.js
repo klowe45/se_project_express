@@ -1,3 +1,5 @@
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 const {
   BAD_REQUEST,
@@ -6,8 +8,6 @@ const {
   SERVER_ERROR,
   CONFLICTING_ERROR,
 } = require("../utils/errors");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
 const JWT_SECRET = require("../utils/config");
 
 const getCurrentUser = (req, res) => {
@@ -58,7 +58,7 @@ const createUser = (req, res) => {
             .status(BAD_REQUEST)
             .send({ message: "Unable to create User" });
         }
-        res
+        return res
           .status(SERVER_ERROR)
           .send({ message: "Server error on created user" });
       });
@@ -88,10 +88,14 @@ const login = (req, res) => {
           .status(UNAUTHORIZED_ACCESS)
           .send({ message: "Wrong Email or Password" });
       }
-      if (err.name)
+      if (err.name) {
         return res
           .status(SERVER_ERROR)
           .send({ message: "Server Error on userLogin" });
+      }
+      return res
+        .status(SERVER_ERROR)
+        .send({ message: "Server Error on userLogin" });
     });
 };
 
