@@ -1,48 +1,37 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
-const {
-  BAD_REQUEST,
-  UNAUTHORIZED_ACCESS,
-  NOT_FOUND,
-  SERVER_ERROR,
-  CONFLICTING_ERROR,
-} = require("../utils/errors");
 const JWT_SECRET = require("../utils/config");
+const BadRequestError = require("../customErrors/BadRequestError");
+const UnauthorizedError = require("../customErrors/UnauthorizedError");
+const NotFoundError = require("../customErrors/NotFoundError");
+const ConflictError = require("../customErrors/ConflictError");
 
 const getCurrentUser = (req, res) => {
   const userId = req.user._id;
   User.findById(userId)
     .orFail(() => {
-      const error = new Error("User ID not found");
-      error.statusCode = NOT_FOUND;
-      throw error;
+      throw new NotFoundError("User not found");
     })
     .then((user) => res.status(200).send(user))
     .catch((err) => {
       console.log(err);
-      if (err.statusCode === NOT_FOUND) {
-        return res.status(NOT_FOUND).send({ message: "Unable to find User" });
-      }
       if (err.name === "CastError") {
-        return res.status(BAD_REQUEST).send({ message: "Invailed user ID" });
+        throw new BadRequestError("Invalid ID");
+      } else {
+        next(err);
       }
-      return res
-        .status(SERVER_ERROR)
-        .send({ message: "Server error on getting user" });
     });
 };
 
 const createUser = (req, res) => {
   const { name, avatar, email, password } = req.body;
   if (!email || !password) {
-    return res.status(BAD_REQUEST).send({ message: "Error, check Email" });
+    throw new BadRequestError("invalid info for created user");
   }
   return User.findOne({ email }).then((existingUser) => {
     if (existingUser) {
-      return res
-        .status(CONFLICTING_ERROR)
-        .send({ message: "Email already used" });
+      throw new ConflictError("User already created");
     }
     return bcrypt
       .hash(password, 10)
@@ -54,13 +43,10 @@ const createUser = (req, res) => {
       )
       .catch((err) => {
         if (err.name === "ValidationError") {
-          return res
-            .status(BAD_REQUEST)
-            .send({ message: "Unable to create User" });
+          throw new BadRequestError("Invalid info entered");
+        } else {
+          next(err);
         }
-        return res
-          .status(SERVER_ERROR)
-          .send({ message: "Server error on created user" });
       });
   });
 };
@@ -68,9 +54,7 @@ const createUser = (req, res) => {
 const login = (req, res) => {
   const { email, password } = req.body;
   if (!email || !password || email.trim() === "" || password.trim() === "") {
-    return res
-      .status(BAD_REQUEST)
-      .send({ message: "Email and password are required" });
+    throw new BadRequestError("Enter correct email and password");
   }
   return User.findUserByCredentials(email, password)
     .then((user) => {
@@ -84,18 +68,10 @@ const login = (req, res) => {
     })
     .catch((err) => {
       if (err.message === "Wrong Email or Password") {
-        return res
-          .status(UNAUTHORIZED_ACCESS)
-          .send({ message: "Wrong Email or Password" });
+        throw new UnauthorizedError("Enter valid info.");
+      } else {
+        next(err);
       }
-      if (err.name) {
-        return res
-          .status(SERVER_ERROR)
-          .send({ message: "Server Error on userLogin" });
-      }
-      return res
-        .status(SERVER_ERROR)
-        .send({ message: "Server Error on userLogin" });
     });
 };
 
@@ -109,23 +85,20 @@ const updateProfile = (req, res) => {
     { new: true, runValidators: true }
   )
     .orFail(() => {
-      const error = new Error("Unable to find userID");
-      error.statusCode = NOT_FOUND;
-      throw error;
+      throw new BadRequestError("Unable to locate user and update");
     })
     .then((user) => {
       res.send(user);
     })
     .catch((err) => {
       if (err.message === "Unable to find userID") {
-        return res.status(NOT_FOUND).send({ message: "Unable to find userID" });
+        throw new NotFoundError("User not found");
       }
       if (err.name === "ValidationError") {
-        return res
-          .status(BAD_REQUEST)
-          .send({ message: "Unknown input during validation" });
+        throw new BadRequestError("Check entered info");
+      } else {
+        next(err);
       }
-      return res.status(SERVER_ERROR).send({ message: "Server Error" });
     });
 };
 
