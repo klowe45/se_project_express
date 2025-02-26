@@ -23,9 +23,10 @@ const createItem = (req, res) => {
         return res
           .status(BAD_REQUEST)
           .send({ message: "Error from createItem" });
-      } else {
-        next(err);
       }
+      return res
+        .status(SERVER_ERROR)
+        .send({ message: "Server Error on create Item" });
     });
 };
 
@@ -68,9 +69,10 @@ const deleteItem = (req, res) => {
         return res
           .status(BAD_REQUEST)
           .send({ message: "Server error on delete" });
-      } else {
-        next(err);
       }
+      return res
+        .status(SERVER_ERROR)
+        .send({ message: "Server error on delete" });
     });
 };
 
@@ -88,9 +90,8 @@ const likeItem = (req, res) => {
       }
       if (err.name === "CastError") {
         return res.status(BAD_REQUEST).send({ message: "Invalid item ID" });
-      } else {
-        next(err);
       }
+      return res.status(SERVER_ERROR).send({ message: "Server Error" });
     });
 };
 
@@ -115,9 +116,8 @@ const dislikeItem = (req, res) => {
     .catch((err) => {
       if (err.name === "CastError") {
         return res.status(BAD_REQUEST).send({ message: "Invalid item ID" });
-      } else {
-        next(err);
       }
+      return res.status(SERVER_ERROR).send({ message: "Server error" });
     });
 };
 
