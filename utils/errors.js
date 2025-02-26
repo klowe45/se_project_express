@@ -1,15 +1,33 @@
-const BAD_REQUEST = 400;
-const UNAUTHORIZED_ACCESS = 401;
-const FORBIDEN = 403;
-const NOT_FOUND = 404;
-const SERVER_ERROR = 500;
-const CONFLICTING_ERROR = 409;
+class HttpError extends Error {
+  constructor(message, statusCode) {
+    super(message);
+    this.statusCode = statusCode;
+    this.name = this.constructor.name;
+  }
 
-module.exports = {
-  BAD_REQUEST,
-  UNAUTHORIZED_ACCESS,
-  NOT_FOUND,
-  SERVER_ERROR,
-  CONFLICTING_ERROR,
-  FORBIDEN,
-};
+  static BadRequestError(message) {
+    return new HttpError(message, 400);
+  }
+
+  static UnauthorizedError(message) {
+    return new HttpError(message, 401);
+  }
+
+  static ForbiddenError(message) {
+    return new HttpError(message, 403);
+  }
+
+  static NotFoundError(message) {
+    return new HttpError(message, 404);
+  }
+
+  static ConflictError(message) {
+    return new HttpError(message, 409);
+  }
+
+  static ServerError(message) {
+    return new HttpError(message, 500);
+  }
+}
+
+module.exports = HttpError;
