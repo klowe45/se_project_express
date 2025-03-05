@@ -33,6 +33,14 @@ const userSchemas = new mongoose.Schema({
     type: String,
     required: true,
     select: false,
+    validate: {
+      validator: function (value) {
+        return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/.test(
+          value
+        );
+      },
+      message: (props) => `${props.value} is not a valid password!`,
+    },
   },
 });
 
