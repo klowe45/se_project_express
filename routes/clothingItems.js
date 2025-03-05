@@ -1,8 +1,8 @@
-import {
+const router = require("express").Router();
+const {
   validatePutItemId,
   itemsCreateValidator,
-} from "../middleware/validation";
-const router = require("express").Router();
+} = require("../middleware/validation");
 const {
   createItem,
   getItems,

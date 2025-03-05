@@ -1,5 +1,5 @@
-import { userValidator } from "../middleware/validation";
 const router = require("express").Router();
+const { userValidator } = require("../middleware/validation");
 const auth = require("../middleware/auth");
 const { getCurrentUser, updateProfile } = require("../controllers/users");
 

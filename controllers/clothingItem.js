@@ -16,7 +16,6 @@ const createItem = (req, res, next) => {
       res.status(201).send({ data: item });
     })
     .catch((err) => {
-      console.lost(err);
       if (err.name === "ValidationError") {
         next(new BadRequestError("Error with entered data."));
       } else {
@@ -45,12 +44,12 @@ const deleteItem = (req, res, next) => {
     .orFail()
     .then((item) => {
       if (item.owner.toString() !== userId) {
-        next(new ForbiddenError("Unmatched user ID"));
+        return next(new ForbiddenError("Unmatched user ID"));
       }
 
       return ClothingItem.findByIdAndDelete(itemId).then((deletedItem) => {
         if (!deleteItem) {
-          throw new ForbiddenError("Unable to find item.");
+          next(new ForbiddenError("Unable to find item."));
         }
         return res
           .status(200)
@@ -79,10 +78,10 @@ const likeItem = (req, res, next) => {
     .then((item) => res.status(201).send({ data: item }))
     .catch((err) => {
       if (err.name === "DocumentNotFoundError") {
-        throw new NotFoundError("Id not found for like.");
+        next(new NotFoundError("Id not found for like."));
       }
       if (err.name === "CastError") {
-        throw new BadRequestError("Invalid ID");
+        next(new BadRequestError("Invalid ID"));
       } else {
         next(err);
       }
@@ -109,7 +108,7 @@ const dislikeItem = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === "CastError") {
-        throw new BadRequestError("Invalid ID");
+        next(new BadRequestError("Invalid ID"));
       } else {
         next(err);
       }

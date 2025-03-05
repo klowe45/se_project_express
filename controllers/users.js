@@ -7,7 +7,7 @@ const UnauthorizedError = require("../customErrors/UnauthorizedError");
 const NotFoundError = require("../customErrors/NotFoundError");
 const ConflictError = require("../customErrors/ConflictError");
 
-const getCurrentUser = (req, res) => {
+const getCurrentUser = (req, res, next) => {
   const userId = req.user._id;
   User.findById(userId)
     .orFail(() => {
@@ -15,16 +15,15 @@ const getCurrentUser = (req, res) => {
     })
     .then((user) => res.status(200).send(user))
     .catch((err) => {
-      console.log(err);
       if (err.name === "CastError") {
-        throw new BadRequestError("Invalid ID");
+        next(new BadRequestError("Invalid ID"));
       } else {
         next(err);
       }
     });
 };
 
-const createUser = (req, res) => {
+const createUser = (req, res, next) => {
   const { name, avatar, email, password } = req.body;
   if (!email || !password) {
     throw new BadRequestError("invalid info for created user");
@@ -43,15 +42,16 @@ const createUser = (req, res) => {
       )
       .catch((err) => {
         if (err.name === "ValidationError") {
-          throw new BadRequestError("Invalid info entered");
+          next(new BadRequestError("Invalid info entered"));
         } else {
           next(err);
         }
-      });
+      })
+      .catch(next);
   });
 };
 
-const login = (req, res) => {
+const login = (req, res, next) => {
   const { email, password } = req.body;
   if (!email || !password || email.trim() === "" || password.trim() === "") {
     throw new BadRequestError("Enter correct email and password");
@@ -68,14 +68,14 @@ const login = (req, res) => {
     })
     .catch((err) => {
       if (err.message === "Wrong Email or Password") {
-        throw new UnauthorizedError("Enter valid info.");
+        next(new UnauthorizedError("Enter valid info."));
       } else {
         next(err);
       }
     });
 };
 
-const updateProfile = (req, res) => {
+const updateProfile = (req, res, next) => {
   const userId = req.user._id;
   const { name, avatar } = req.body;
 
@@ -92,10 +92,10 @@ const updateProfile = (req, res) => {
     })
     .catch((err) => {
       if (err.message === "Unable to find userID") {
-        throw new NotFoundError("User not found");
+        next(new NotFoundError("User not found"));
       }
       if (err.name === "ValidationError") {
-        throw new BadRequestError("Check entered info");
+        next(new BadRequestError("Check entered info"));
       } else {
         next(err);
       }
