@@ -21,18 +21,19 @@ app.use(express.json());
 
 app.use(cors());
 
-app.use(requestLogger);
-
 app.get("/crash-test", () => {
   setTimeout(() => {
     throw new Error("Server will crash now");
   }, 0);
 });
+
+app.use(requestLogger);
+
+app.use("/", mainRouter);
+
 app.use(errorLogger);
 app.use(errors());
 app.use(errorHandler);
-
-app.use("/", mainRouter);
 
 app.listen(PORT, () => {
   console.log(`Server is listening to port ${PORT}`);

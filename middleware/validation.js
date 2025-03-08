@@ -27,7 +27,7 @@ module.exports.validatePutItemId = celebrate({
 
 module.exports.itemsCreateValidator = celebrate({
   body: Joi.object().keys({
-    nmae: Joi.string().required().min(2).max(30).messages({
+    name: Joi.string().required().min(2).max(30).messages({
       "string.min": "The minimum length for name is 2",
       "string.max": "The maximum lenght for name is 30",
       "string.empty": "This field is required",
@@ -65,13 +65,26 @@ module.exports.userCreateValidator = celebrate({
 
 module.exports.userValidator = celebrate({
   body: Joi.object().keys({
+    email: Joi.string().required().custom(validateEmail).messages({
+      "string.empty": "This field is required",
+      "string.uri": "Must be a vaild email",
+    }),
+    password: Joi.string().required().min(8).messages({
+      "string.empty": "This field is required",
+    }),
+  }),
+});
+
+module.exports.userPatchValidator = celebrate({
+  body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30).messages({
       "string.min": "The minimum length for name is 2",
       "string.max": "The maximum lenght for name is 30",
       "string.empty": "This field is required",
     }),
-    password: Joi.string().required().min(8).messages({
+    avatar: Joi.string().required().custom(validateURL).messages({
       "string.empty": "This field is required",
+      "string.uri": "Must be a vaild url",
     }),
   }),
 });

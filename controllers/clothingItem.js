@@ -61,7 +61,7 @@ const deleteItem = (req, res, next) => {
         next(new NotFoundError("Item not found"));
       }
       if (err.name === "CastError") {
-        throw new BadRequestError("Invalid ID");
+        next(new BadRequestError("Invalid ID"));
       } else {
         next(err);
       }

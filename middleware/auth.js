@@ -19,7 +19,7 @@ const auth = (req, res, next) => {
   } catch (err) {
     next(new UnauthorizedError("User not authorized"));
   }
-  req.params = payload;
+  req.user = payload;
   next();
 };
 
